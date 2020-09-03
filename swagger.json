@@ -1,0 +1,242 @@
+{
+  "info": {
+    "title": "Tennis Web Application",
+    "description": "API documentation",
+    "version": "1.0.0",
+    "license": {
+      "name": "MIT",
+      "url": "https://opensource.org/licenses/MIT"
+    }
+  },
+  "tags": [
+    {
+      "name": "Games",
+      "description": "API for Tennis games"
+    }
+  ],
+  "consumes": ["application/json"],
+  "produces": ["application/json"],
+  "swagger": "2.0",
+  "paths": {
+    "/auth": {
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "description": "JSON payload",
+          "schema": {
+            "$ref": "#/definitions/auth"
+          }
+        }
+      ],
+      "post": {
+        "summary": "Create account",
+        "responses": {
+          "200": {
+            "description": "Return message of action",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string",
+                  "example": "User created"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/game-results": {
+      "get": {
+        "summary": "Get all games",
+        "responses": {
+          "200": {
+            "description": "Return json of games",
+            "schema": {
+              "type": "object",
+              "$ref": "#/definitions/game-results"
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Post game results",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "description": "JSON payload",
+            "schema": {
+              "$ref": "#/definitions/post-game"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Return added game and message",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string",
+                  "example": "Game added"
+                },
+                "id": {
+                  "type": "integer",
+                  "example": 1
+                },
+                "winner": {
+                  "type": "string",
+                  "example": "Dawid"
+                },
+                "loser": {
+                  "type": "string",
+                  "example": "Dawid"
+                },
+                "result": {
+                  "type": "string",
+                  "example": "6:2"
+                },
+                "date": {
+                  "type": "string",
+                  "example": "22.02.22"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/game-results/{id}": {
+      "get": {
+        "summary": "Get selected game",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "Id of game",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Return data of game",
+            "schema": {
+              "type": "object",
+              "$ref": "#/definitions/game-results"
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Remove selected game",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "Id of game",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Return message of action",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string",
+                  "example": "Game deleted"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "summary": "Update selected game",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "Id of game",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Return message of action",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string",
+                  "example": "Game updated"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "auth": {
+      "type": "object",
+      "properties": {
+        "email": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string"
+        },
+        "phone": {
+          "type": "integer"
+        }
+      }
+    },
+    "game-results": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer"
+        },
+        "winner": {
+          "type": "string"
+        },
+        "loser": {
+          "type": "string"
+        },
+        "result": {
+          "type": "string"
+        },
+        "date": {
+          "type": "string"
+        }
+      }
+    },
+    "post-game": {
+      "type": "object",
+      "properties": {
+        "winner": {
+          "type": "string"
+        },
+        "loser": {
+          "type": "string"
+        },
+        "result": {
+          "type": "string"
+        },
+        "date": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}
