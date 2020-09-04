@@ -8,6 +8,9 @@ module.exports = {
   username: env.DB_USER,
   password: env.DB_PASSWORD,
   database: env.DATABASE,
+  ssl: {
+    rejectUnauthorized: false,
+  },
   synchronize: true,
   logging: false,
   entities: ['./dist/src/entity/**/*.js'],

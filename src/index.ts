@@ -4,6 +4,7 @@ import cors from 'cors';
 import { createConnection } from 'typeorm';
 import swaggerUi from 'swagger-ui-express';
 import * as swaggerDocument from '../swagger.json';
+import { env } from '../environment';
 
 import GameResultRouter from './routes/game-results';
 import AuthRouter from './routes/auth';
@@ -18,5 +19,5 @@ createConnection().then(() => {
   app.use('/game-results', GameResultRouter);
   app.use('/auth', AuthRouter);
 
-  app.listen(5000);
+  app.listen(env.PORT || 5000);
 });
