@@ -1,4 +1,4 @@
-import { env } from './environment';
+const { env } = require('./dist/environment');
 
 module.exports = {
   name: env.DB_ORM_NAME,
@@ -10,5 +10,5 @@ module.exports = {
   database: env.DATABASE,
   synchronize: true,
   logging: false,
-  entities: ['./src/entity/**/*.ts'],
+  entities: ['./dist/src/entity/**/*.js'],
 };
