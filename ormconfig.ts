@@ -1,4 +1,4 @@
-const { env } = require('./dist/environment');
+import { env } from './environment';
 
 module.exports = {
   name: env.DB_ORM_NAME,
@@ -8,10 +8,7 @@ module.exports = {
   username: env.DB_USER,
   password: env.DB_PASSWORD,
   database: env.DATABASE,
-  ssl: {
-    rejectUnauthorized: false,
-  },
   synchronize: true,
   logging: false,
-  entities: ['./dist/src/entity/**/*.js'],
+  entities: ['./src/entity/**/*.ts'],
 };

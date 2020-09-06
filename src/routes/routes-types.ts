@@ -8,8 +8,12 @@ export interface IGameResultBody {
   result: string;
 }
 
+export interface IParams {
+  id?: string;
+}
+
 export interface IUpdateResultById {
-  params: { id: string };
+  params: IParams;
   body: IGameResultBody;
 }
 
@@ -17,4 +21,12 @@ export interface ICreateAccountBody {
   email: string;
   password: string;
   phone?: number;
+}
+
+export interface IAuthData {
+  name: string;
+}
+
+export interface IJwtAuthData {
+  email: string;
 }
