@@ -78,12 +78,10 @@ router.post('/login', async (req: Request, res: Response) => {
     const isPasswordValid = passwordCrypt.compareSync(password, user.password);
 
     if (!user || !isPasswordValid) {
-      res.json({
+      return res.json({
         message: 'User doesnt exist - incorrect email or password',
         status: 404,
       });
-
-      return;
     }
 
     const authData = { name: email };
@@ -101,13 +99,11 @@ router.post('/login', async (req: Request, res: Response) => {
 router.post('/refresh-token', async (req: Request, res: Response) => {
   const { token = '' } = req.body || {};
   if (!token) {
-    res.sendStatus(401);
-    return;
+    return res.sendStatus(401);
   }
 
   if (!refreshTokens.includes(token)) {
-    res.sendStatus(403);
-    return;
+    return res.sendStatus(403);
   }
 
   jwt.verify(
@@ -115,8 +111,7 @@ router.post('/refresh-token', async (req: Request, res: Response) => {
     env.ACCESS_TOKEN_REFRESH_SECRET,
     (err: Error, user: IJwtAuthData) => {
       if (err) {
-        res.sendStatus(403);
-        return;
+        return res.sendStatus(403);
       }
 
       const accessToken = generateAccessToken({ name: user.email });
