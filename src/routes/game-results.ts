@@ -24,8 +24,7 @@ router.get('/', authenticationToken, async (req: Request, res: Response) => {
 
     res.json(games);
   } catch (error) {
-    console.log('error - get-game-result ', error);
-    res.json({ ...error });
+    res.json({ ...error, status: 401 });
   }
 });
 
@@ -38,8 +37,7 @@ router.get('/:id', authenticationToken, async (req: Request, res: Response) => {
 
     res.json(selectedGame);
   } catch (error) {
-    console.log('error - get single game result ', error);
-    res.json({ ...error });
+    res.json({ ...error, status: 401 });
   }
 });
 
@@ -60,8 +58,7 @@ router.post(
 
       res.json({ addedGame, message: 'Game added' });
     } catch (error) {
-      console.log('error - add-game-result ', error);
-      res.json({ ...error });
+      res.json({ ...error, status: 401 });
     }
   },
 );
@@ -79,8 +76,7 @@ router.delete(
 
       res.json({ message: 'Game deleted' });
     } catch (error) {
-      console.log('error - delete single game result ', error);
-      res.json({ ...error });
+      res.json({ ...error, status: 401 });
     }
   },
 );
@@ -102,8 +98,7 @@ router.patch(
 
       res.json({ message: 'Game updated' });
     } catch (error) {
-      console.log('error - update result ', error);
-      res.json({ ...error });
+      res.json({ ...error, status: 401 });
     }
   },
 );

@@ -2,6 +2,7 @@ import { Router, Request, Response } from 'express';
 import { getRepository } from 'typeorm';
 import { IRouter } from 'express-serve-static-core';
 import jwt from 'jsonwebtoken';
+import passwordCrypt from 'bcrypt';
 
 import { MailSender } from '../../mails';
 import { User } from '../entity/user';
@@ -9,6 +10,7 @@ import { translations } from '../helper/translations';
 import { ICreateAccountBody, IAuthData, IJwtAuthData } from './routes-types';
 import { env } from '../../environment';
 
+const saltRounds = 10;
 const router: IRouter = Router();
 const userRepository = () => getRepository(User);
 
@@ -21,7 +23,7 @@ const generateAccessToken = (authData: IAuthData): string => {
 // TODO: store refresh tokens - below variable is only for testing
 let refreshTokens: any[] = [];
 
-const prepareEmail = (email: string) => {
+const prepareEmail = async (email: string) => {
   const sendMail = new MailSender();
 
   const payload = {
@@ -30,7 +32,7 @@ const prepareEmail = (email: string) => {
     to: email,
   };
 
-  sendMail.sendingMail(payload);
+  await sendMail.sendingMail(payload);
 };
 
 // create account
@@ -39,22 +41,29 @@ router.post('/', async (req: Request, res: Response) => {
     const { email, password, phone = null }: ICreateAccountBody =
       req.body || {};
 
-    const isUserExist:
+    const user:
       | ICreateAccountBody
       | undefined = await userRepository().findOne({ where: { email } });
 
-    if (isUserExist === undefined) {
-      await userRepository().save({ email, password, phone });
+    if (!user) {
+      await passwordCrypt.hash(
+        password,
+        saltRounds,
+        async (err: Error, hash: string) => {
+          if (!err) {
+            await userRepository().save({ email, password: hash, phone });
+          }
+        },
+      );
       res.json({ message: 'User created' });
-      prepareEmail(email);
+      await prepareEmail(email);
 
       return;
     }
 
     res.json({ message: 'User with this email already exist.' });
   } catch (error) {
-    console.log('error - create account ', error);
-    res.json({ ...error });
+    res.json({ ...error, status: 401 });
   }
 });
 
@@ -63,12 +72,16 @@ router.post('/login', async (req: Request, res: Response) => {
   try {
     const { email, password } = req.body;
 
-    const isUserExist = await userRepository().findOne({
-      where: { email, password },
+    const user = await userRepository().findOne({
+      where: { email },
     });
+    const isPasswordValid = passwordCrypt.compareSync(password, user.password);
 
-    if (isUserExist === undefined) {
-      res.json({ message: 'User doesnt exist' });
+    if (!user || !isPasswordValid) {
+      res.json({
+        message: 'User doesnt exist - incorrect email or password',
+        status: 404,
+      });
 
       return;
     }
@@ -80,13 +93,12 @@ router.post('/login', async (req: Request, res: Response) => {
     refreshTokens.push(refreshToken);
     res.json({ accessToken, refreshToken });
   } catch (error) {
-    console.log('error - login to account ', error);
-    res.json({ ...error });
+    res.json({ ...error, status: 401 });
   }
 });
 
 // refresh token
-router.post('/token', async (req: Request, res: Response) => {
+router.post('/refresh-token', async (req: Request, res: Response) => {
   const { token = '' } = req.body || {};
   if (!token) {
     res.sendStatus(401);

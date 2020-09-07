@@ -35,12 +35,8 @@ export class MailSender {
     };
   };
 
-  sendingMail = (payload: IMailOptions) => {
+  sendingMail = async (payload: IMailOptions) => {
     this.mailerSetup(payload);
-    this.transporter.sendMail(this.mailOptions, (error: Error) => {
-      if (error) {
-        console.log('error - mailing ', error);
-      }
-    });
+    await this.transporter.sendMail(this.mailOptions);
   };
 }
